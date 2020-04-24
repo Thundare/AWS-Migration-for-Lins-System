@@ -1,5 +1,4 @@
 import boto3
-import re
 import query
 client = boto3.client('s3')
 
