@@ -32,3 +32,5 @@ bucket_objects = get_doc_list()
 #     print(match)
 
 call.query_path()
+
+slicer = slice(-9)
