@@ -13,8 +13,9 @@ cnx = mysql.connector.connect(
 )
 
 cursor = cnx.cursor()
-cursor.execute("SELECT concat(Vendor_ID, '_logo.jpg') AS vendor_id_logo, concat(Company_Code, '/logo.jpg')"
-               " As Company_ID_logo FROM ss2_migration_latest.SS1_company_code_linkages;")
+cursor.execute("SELECT concat(Vendor_ID, '_logo.jpg') AS vendor_id_logo, concat(upper(Company_Code), '/logo.jpg') "
+               "As Company_ID_logo, is_factory, vendor_internal_id "
+               "FROM ss2_migration_latest.SS1_company_code_linkages2;")
 
 linkage = cursor.fetchall()
 cnx.close()
@@ -33,11 +34,31 @@ for logos in list_of_objects['Contents']:
 for key in keys:
     for link in linkage:
         if key in link:
-            response = client.copy_object(
-                Bucket='abacus-test-2',  # Destination bucket
-                CopySource=f'company-logo-live/{key}',
-                Key=f'seller-document/{link[0]}',
+            if link[2] == 1 and link[3] != 'None':
+                response = client.copy_object(
+                    Bucket='abacus-test-2',
+                    CopySource=f'company-logo-live/{key}',
+                    Key=f'ss2-us-public-tst/factory-logo/{link[0]}',
                 )
-            print(response)
+                response2 = client.copy_object(
+                    Bucket='abacus-test-2',
+                    CopySource=f'company-logo-live/{key}',
+                    Key=f'ss2-us-public-tst/seller-logo/{link[0]}',
+                )
+                print(response, response2)
 
+            elif link[2] == 1:
+                response = client.copy_object(
+                    Bucket='abacus-test-2',
+                    CopySource=f'company-logo-live/{key}',
+                    Key=f'ss2-us-public-tst/factory-logo/{link[0]}',
+                )
+                print(response)
 
+            elif link[2] == 0:
+                response = client.copy_object(
+                    Bucket='abacus-test-2',  # Destination bucket
+                    CopySource=f'company-logo-live/{key}',
+                    Key=f'ss2-us-public-tst/seller-logo/{link[0]}',
+                    )
+                print(response)
