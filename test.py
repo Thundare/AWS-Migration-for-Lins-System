@@ -31,6 +31,4 @@ bucket_objects = get_doc_list()
 #     match = re.search(, str)
 #     print(match)
 
-call.query_path()
-
 slicer = slice(-9)
