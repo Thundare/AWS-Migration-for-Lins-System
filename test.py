@@ -1,34 +1,31 @@
-import boto3
-import mysql.connector
-import re
-import query as call
-client = boto3.client('s3')
-
-
-def get_doc_list():
-    paginator = client.get_paginator('list_objects_v2')
-    pages = paginator.paginate(Bucket='qcdocs-live')
-    obj_list = []
-    for page in pages:
-        for bucket_object in page['Contents']:
-            vibe = bucket_object['Key']
-            obj_list.append(vibe)
-    return obj_list
-
-
-bucket_objects = get_doc_list()
+# import boto3
+# import mysql.connector
+# client = boto3.client('s3')
 #
-# for docs in bucket_objects:
+# cnx = mysql.connector.connect(
+#     host='ss2-test-database.cl9pljacubb2.us-west-2.rds.amazonaws.com',
+#     user='ss2_application',
+#     password='se3cur1ty',
+#     database='ss2_migration_latest'
+# )
+#
+# cursor = cnx.cursor()
+#
+# cursor.execute("SELECT m.seller_id, concat(sku, '/',file_name_orig) AS sku1, "
+#                "concat(chempax_sku, '/', file_name_orig) AS sku2 "
+#                "FROM ss2_migration_latest.products p INNER JOIN master_products m "
+#                "ON m.master_product_id = p.master_product_id "
+#                "INNER JOIN documents d "
+#                "ON d.seller_id = m.seller_id")
+#
+# sql_docs = cursor.fetchall()
+# cnx.close()
+# print('Query ran and closed out.')
+#
+# for docs in sql_docs:
 #     jobs = client.copy_object(
 #         Bucket='abacus-test-2',  # Destination bucket
-#         CopySource=f'qcdocs-tst/{docs}',
-#         Key=f'seller-document/id/{docs}',
+#         CopySource=f'qcdocs-live/{docs[1]}',
+#         Key=f'seller-document/{docs[0]}/{docs[1]}',
 #     )
 #     print(jobs)
-#
-
-# for obj in bucket_objects:   # Loop through objects in bucket one time
-#     match = re.search(, str)
-#     print(match)
-
-slicer = slice(-9)

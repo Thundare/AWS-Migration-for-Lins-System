@@ -1,7 +1,5 @@
 import boto3
 import mysql.connector
-import re
-import query
 client = boto3.client('s3')
 
 # Grabbing keys from list_objects
