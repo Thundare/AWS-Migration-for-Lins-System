@@ -29,3 +29,5 @@
 #         Key=f'seller-document/{docs[0]}/{docs[1]}',
 #     )
 #     print(jobs)
+
+# key_split = re.findall(r'certificates', key)

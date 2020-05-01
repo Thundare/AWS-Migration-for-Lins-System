@@ -17,7 +17,7 @@ cursor.execute("SELECT m.seller_id, concat(sku, '/',file_name_orig) AS sku1, "
                "FROM ss2_migration_latest.products p INNER JOIN master_products m "
                "ON m.master_product_id = p.master_product_id "
                "INNER JOIN documents d "
-               "ON d.seller_id = m.seller_id LIMIT 8000")
+               "ON d.seller_id = m.seller_id")
 
 sql_docs = cursor.fetchall()
 cnx.close()
@@ -40,7 +40,7 @@ for key in keys:
         if key in docs:
             key_split = re.split('/', key)
             jobs = client.copy_object(
-                Bucket='abacus-test-2',  # Destination bucket
+                Bucket='ss2-us-tst',  # Destination bucket
                 CopySource=f'qcdocs-live/{key}',
                 Key=f'seller-document/{docs[0]}/{key_split[1]}',
             )
