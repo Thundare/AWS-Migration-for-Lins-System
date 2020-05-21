@@ -30,6 +30,7 @@ keys = []
 for logos in list_of_objects['Contents']:
     keys.append(logos['Key'])
 
+# Condition to determine the seller type, then execute a match and copy
 for key in keys:
     for link in linkage:
         if key in link:
