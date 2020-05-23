@@ -1,5 +1,6 @@
 import boto3
 import mysql.connector
+import re
 client = boto3.client('s3')
 
 cnx = mysql.connector.connect(
@@ -11,12 +12,28 @@ cnx = mysql.connector.connect(
 
 cursor = cnx.cursor()
 
-cursor.execute("SELECT m.seller_id, concat(sku, '/',file_name_orig) AS sku1, "
-               "concat(chempax_sku, '/', file_name_orig) AS sku2 "
-               "FROM ss2_migration_latest.products p INNER JOIN master_products m "
-               "ON m.master_product_id = p.master_product_id "
-               "INNER JOIN documents d "
-               "ON d.seller_id = m.seller_id")
+cursor.execute("SELECT * FROM ss2_migration_latest.SS1_shipment_coa_mapping")
 
-sql_docs = cursor.fetchall()
+db_output = cursor.fetchall()
 cnx.close()
+
+# Over 1,000 objects, requires pagination
+paginator = client.get_paginator('list_objects_v2')
+pages = paginator.paginate(Bucket='shipment-batch-coa-live')
+
+keys = []
+for page in pages:
+    for bucket_object in page['Contents']:
+        vibe = bucket_object['Key']
+        keys.append(vibe)
+
+for key in keys:
+    key_slice = re.split('/', key)
+    for output in db_output:
+        if int(key_slice[0]) in output:
+            cp_obj = client.copy_object(
+                Bucket='abacus-test-2',  # Destination bucket
+                CopySource=f'shipment-batch-coa-live/{key}',
+                Key=f'coaa/ss2-us-tst/{output[4]}',
+            )
+            print(cp_obj)
