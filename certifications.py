@@ -19,8 +19,8 @@ for key in keys:
         file_name = (split_key[2] + '/' + split_key[3])
         print(file_name)
         jobs = client.copy_object(
-            Bucket='abacus-test-2',  # Destination bucket
+            Bucket='ss2-us-public-live',  # Destination bucket
             CopySource=f'company-info-live/{key}',
-            Key=f'certificates/seller-document/{file_name}',
+            Key=f'seller-document/{file_name}',
         )
         print(jobs)

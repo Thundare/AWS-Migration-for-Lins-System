@@ -7,14 +7,14 @@ cnx = mysql.connector.connect(
     host='ss2-test-database.cl9pljacubb2.us-west-2.rds.amazonaws.com',
     user='ss2_application',
     password='se3cur1ty',
-    database='ss2_migration_latest'
+    database='ss2_migration_latest_0603'
 )
 
 cursor = cnx.cursor()
 
 cursor.execute("SELECT m.seller_id, concat(sku, '/',file_name_orig) AS sku1, "
                "concat(chempax_sku, '/', file_name_orig) AS sku2 "
-               "FROM ss2_migration_latest.products p INNER JOIN master_products m "
+               "FROM ss2_migration_latest_0603.products p INNER JOIN master_products m "
                "ON m.master_product_id = p.master_product_id "
                "INNER JOIN documents d "
                "ON d.seller_id = m.seller_id")
@@ -40,7 +40,7 @@ for key in keys:
         if key in docs:
             key_split = re.split('/', key)
             jobs = client.copy_object(
-                Bucket='ss2-us-tst',  # Destination bucket
+                Bucket='ss2-us-public-live',  # Destination bucket
                 CopySource=f'qcdocs-live/{key}',
                 Key=f'seller-document/{docs[0]}/{key_split[1]}',
             )

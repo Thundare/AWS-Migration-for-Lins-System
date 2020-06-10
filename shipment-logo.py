@@ -7,14 +7,14 @@ cnx = mysql.connector.connect(
     host='ss2-test-database.cl9pljacubb2.us-west-2.rds.amazonaws.com',
     user='ss2_application',
     password='se3cur1ty',
-    database='ss2_migration_latest'
+    database='ss2_migration_latest_0603'
 )
 
 cursor = cnx.cursor()
 cursor.execute("SELECT concat(Vendor_ID, '_logo.jpg') AS vendor_id_logo, concat(upper(Company_Code), '/logo.jpg') "
                "As Company_ID_logo, is_factory, vendor_internal_id, concat(upper(Company_Code), '/logo.png') "
                "AS Company_ID_logo_2, concat(upper(Company_Code), '/logo.JPG') as Company_ID_logo_3 "
-               "FROM ss2_migration_latest.SS1_company_code_linkages2;")
+               "FROM ss2_migration_latest_0603.SS1_company_code_linkages2;")
 
 linkage = cursor.fetchall()
 cnx.close()
@@ -37,14 +37,14 @@ for key in keys:
             if link[2] == 1 and link[3] is not None:
 
                 response = client.copy_object(
-                    Bucket='abacus-test-2',
+                    Bucket='ss2-us-public-live',
                     CopySource=f'company-logo-live/{key}',
-                    Key=f'ss2-us-public-tst/factory-logo/{link[0]}',
+                    Key=f'factory-logo/{link[0]}',
                 )
                 response2 = client.copy_object(
-                    Bucket='abacus-test-2',
+                    Bucket='ss2-us-public-live',
                     CopySource=f'company-logo-live/{key}',
-                    Key=f'ss2-us-public-tst/seller-logo/{link[0]}',
+                    Key=f'seller-logo/{link[0]}',
                 )
                 print(response, response2)
                 continue
@@ -52,9 +52,9 @@ for key in keys:
             elif link[2] == 1:
 
                 response = client.copy_object(
-                    Bucket='abacus-test-2',
+                    Bucket='ss2-us-public-live',
                     CopySource=f'company-logo-live/{key}',
-                    Key=f'ss2-us-public-tst/factory-logo/{link[0]}',
+                    Key=f'factory-logo/{link[0]}',
                 )
                 print(response)
                 continue
@@ -62,9 +62,9 @@ for key in keys:
             elif link[2] == 0:
 
                 response = client.copy_object(
-                    Bucket='abacus-test-2',  # Destination bucket
+                    Bucket='ss2-us-public-live',  # Destination bucket
                     CopySource=f'company-logo-live/{key}',
-                    Key=f'ss2-us-public-tst/seller-logo/{link[0]}',
+                    Key=f'seller-logo/{link[0]}',
                     )
                 print(response)
                 continue

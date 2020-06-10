@@ -7,12 +7,12 @@ cnx = mysql.connector.connect(
     host='ss2-test-database.cl9pljacubb2.us-west-2.rds.amazonaws.com',
     user='ss2_application',
     password='se3cur1ty',
-    database='ss2_migration_latest'
+    database='ss2_migration_latest_0603'
 )
 
 cursor = cnx.cursor()
 
-cursor.execute("SELECT * FROM ss2_migration_latest.SS1_shipment_coa_mapping")
+cursor.execute("SELECT * FROM ss2_migration_latest_0603.SS1_shipment_coa_mapping")
 
 db_output = cursor.fetchall()
 cnx.close()
@@ -32,8 +32,8 @@ for key in keys:
     for output in db_output:
         if int(key_slice[0]) in output:
             cp_obj = client.copy_object(
-                Bucket='abacus-test-2',  # Destination bucket
+                Bucket='ss2-us-live',  # Destination bucket
                 CopySource=f'shipment-batch-coa-live/{key}',
-                Key=f'coaa/ss2-us-tst/{output[4]}',
+                Key=f'{output[4]}',
             )
             print(cp_obj)
