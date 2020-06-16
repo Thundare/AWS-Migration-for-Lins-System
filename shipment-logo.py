@@ -1,14 +1,19 @@
 import boto3
 import mysql.connector
+import os
+
 client = boto3.client('s3')
 
-# Grabbing keys from list_objects
+# MySQL credentials
+
 cnx = mysql.connector.connect(
-    host='ss2-test-database.cl9pljacubb2.us-west-2.rds.amazonaws.com',
-    user='ss2_application',
-    password='se3cur1ty',
-    database='ss2_migration_latest_0603'
+    host=os.environ['MSQL_HOST'],
+    user=os.environ['MSQL_USER'],
+    password=os.environ['MSQL_PASS'],
+    database=os.environ['MYSQL_DB']
 )
+
+# MySQL query to grab the logos for the shipment orders
 
 cursor = cnx.cursor()
 cursor.execute("SELECT concat(Vendor_ID, '_logo.jpg') AS vendor_id_logo, concat(upper(Company_Code), '/logo.jpg') "
@@ -18,19 +23,17 @@ cursor.execute("SELECT concat(Vendor_ID, '_logo.jpg') AS vendor_id_logo, concat(
 
 linkage = cursor.fetchall()
 cnx.close()
-# query end --
 
-
+# Use AWS API to list objects in buckets and store results into a list
 list_of_objects = client.list_objects_v2(
     Bucket='company-logo-live'
 )
 
-# Storing Keys into a list
 keys = []
 for logos in list_of_objects['Contents']:
     keys.append(logos['Key'])
 
-# Condition to determine the seller type, then execute a match and copy
+# Condition to determine the seller type(FD / Non-FD), then find a match and copy to new bucket
 for key in keys:
     for link in linkage:
         if key in link:

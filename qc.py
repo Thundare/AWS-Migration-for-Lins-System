@@ -1,13 +1,16 @@
 import boto3
 import mysql.connector
 import re
+import os
+
 client = boto3.client('s3')
 
+# MySQL credentials
 cnx = mysql.connector.connect(
-    host='ss2-test-database.cl9pljacubb2.us-west-2.rds.amazonaws.com',
-    user='ss2_application',
-    password='se3cur1ty',
-    database='ss2_migration_latest_0603'
+    host=os.environ['MSQL_HOST'],
+    user=os.environ['MSQL_USER'],
+    password=os.environ['MSQL_PASS'],
+    database=os.environ['MYSQL_DB']
 )
 
 cursor = cnx.cursor()

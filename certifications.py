@@ -1,6 +1,7 @@
 import boto3
 import re
 import fnmatch
+
 client = boto3.client('s3')
 
 # Over 1,000 objects, requires pagination
